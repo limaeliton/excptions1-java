@@ -6,25 +6,26 @@ import java.util.Date;
 import java.util.Scanner;
 
 import model.entities.Reservation;
+import model.exceptions.DomainException;
 
 public class Program {
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args)  {
 	 
 		Scanner teclado = new Scanner(System.in);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		
-		System.out.print("Room number: ");
-		int number = teclado.nextInt();
-		System.out.print("Check-in date (dd/MM/yyyy): " );
-		Date checkIn = sdf.parse(teclado.next());
-		System.out.print("Check-out date (dd/MM/yyyy): " );
-		Date checkOut = sdf.parse(teclado.next());
+		try {
 		
-		if (!checkOut.after(checkIn)) {
-			System.out.println("Error in reservation: check-out date must be after check-in date");
-		}
-		else {
+			System.out.print("Room number: ");
+			int number = teclado.nextInt();
+			System.out.print("Check-in date (dd/MM/yyyy): " );
+			Date checkIn = sdf.parse(teclado.next());
+			System.out.print("Check-out date (dd/MM/yyyy): " );
+			Date checkOut = sdf.parse(teclado.next());
+				
+		
+			
 			Reservation reservation = new Reservation(number, checkIn, checkOut);
 			System.out.println("Reservation: " + reservation);
 			
@@ -36,18 +37,21 @@ public class Program {
 			 checkOut = sdf.parse(teclado.next());
 			 
 		
-			String error = reservation.updateDates(checkIn, checkOut);
-			if(error != null) {
-				System.out.println("Error in reservation: " + error);
-			}
-			else {
-				System.out.println("Reservation: " + reservation);
-			}
-			
-			 	 
-			 
+			 reservation.updateDates(checkIn, checkOut);
+			System.out.println("Reservation: " + reservation);			
 		}
 		
+		catch(ParseException error) {
+			System.out.println("invalid date format");
+		}
+		catch(DomainException error) {
+			System.out.println("Error inreservation: " + error.getMessage());
+		}
+		// é um tipo de Exceção genérico pra que seja feito o UPCast para RuntimeException
+		// e mostra uma mensagem genérica de erro inesperado. também tem a estrutura de herança e UPCast .
+		catch(RuntimeException error) {
+			System.out.println("Unexpected error");
+		}
 		
 		teclado.close();
 	}
